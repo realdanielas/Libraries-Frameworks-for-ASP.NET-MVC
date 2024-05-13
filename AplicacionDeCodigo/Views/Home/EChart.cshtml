@@ -1,0 +1,270 @@
+﻿@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "ECharts";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.0/echarts.min.js"></script>
+
+</head>
+<body style="font-family: 'Montserrat', sans-serif;">
+    <section class="ps-5 pe-5 pt-5">
+        <div class="container-fluid justify-content-start">
+            <p class="fs-4 fw-bold text-black"><span class="border border-3 me-3"></span>Gráficos de datos de ventas utilizando ECharts</p>
+        </div>
+    </section>
+    <section>
+        <div class="container-fluid d-flex">
+            <div class="container m-5" style="width: 100%; height: 500px;">
+                <p class="text-center">GRÁFICO DE LÍNEAS</p>
+                <div id="echartsLine" style="width: 100%; height: 500px;"></div>
+            </div>
+            <div class="container m-5" style="width: 100%; height: 500px;">
+                <p class="text-center">GRÁFICO DE ÁREA</p>
+                <div id="echartsArea" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+        <div class="container-fluid d-flex mb-5 pb-5">
+            <div class="container m-5 border-top pt-5 pb-5" style="width: 100%; height: 500px;">
+                <p class="text-center">GRÁFICO DE BARRAS</p>
+                <div id="echartsBar" style="width: 100%; height: 500px;"></div>
+            </div>
+            <div class="container m-5 border-top pt-5 pb-5" style="width: 100%; height: 500px;">
+                <p class="text-center">GRÁFICO DE PASTEL</p>
+                <div id="echartsPie" style="width: 100%; height: 500px;"></div>
+            </div>
+        </div>
+    </section>
+
+
+    @section scripts
+    {
+        @*LINE*@
+        <script>
+            // Obtener los datos del servidor
+            var fechas = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Fechas));
+            var montos = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Montos));
+
+            var data = [];
+            for (var i = 0; i < fechas.length; i++) {
+                data.push([fechas[i], montos[i]]);
+            }
+
+            var dom = document.getElementById("echartsLine");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                //title: { text: CHART_TITLE },
+                tooltip: { trigger: 'axis' },
+                legend: {
+                    data: ['Ventas'],
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: { saveAsImage: {} },
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: fechas.map(function (value) {
+                        var date = new Date(value);
+                        return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                    })
+                },
+                yAxis: { type: 'value' },
+                color: ['#ff9900'], // Cambia el color de la línea
+                series: [
+                    {
+                        name: 'Ventas',
+                        type: 'line',
+                        data: montos
+                    }
+                ]
+            };
+
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        </script>
+        @*AREA*@
+        <script>
+            // Obtener los datos del servidor
+            var fechas = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Fechas));
+            var montos = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Montos));
+
+            var data = [];
+            for (var i = 0; i < fechas.length; i++) {
+                data.push([fechas[i], montos[i]]);
+            }
+
+            var dom = document.getElementById("echartsArea");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                //title: { text: CHART_TITLE },
+                tooltip: { trigger: 'axis' },
+                legend: {
+                    data: ['Ventas']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: { saveAsImage: {} }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: fechas.map(function (value) {
+                        var date = new Date(value);
+                        return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                    })
+                },
+                yAxis: { type: 'value' },
+                series: [
+                    {
+                        name: 'Ventas',
+                        type: 'line',
+                        color: ['#ff22b0'],
+                        stack: 'Total',
+                        areaStyle: {},
+                        data: montos
+                    }
+                ]
+            };
+
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        </script>
+        @*BAR*@
+        <script>
+            // Obtener los datos del servidor
+            var fechas = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Fechas));
+            var montos = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Montos));
+
+            var data = [];
+            for (var i = 0; i < fechas.length; i++) {
+                data.push([fechas[i], montos[i]]);
+            }
+
+            var dom = document.getElementById("echartsBar");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                //title: { text: CHART_TITLE },
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: {
+                    data: ['Ventas']
+                },
+                toolbox: {
+                    feature: { saveAsImage: {} }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        axisTick: { show: false },
+                        data: fechas.map(function (value) {
+                            var date = new Date(value);
+                            return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                        })
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: 'Ventas',
+                        type: 'bar',
+                        color: ['#98e37a'],
+                        stack: 'Total',
+                        label: {
+                            show: true,
+                            position: 'inside'
+                        },
+                        data: montos
+                    }
+                ]
+            };
+
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        </script>
+        @*PIE*@
+        <script>
+            // Obtener los datos del servidor
+            var fechas = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Fechas));
+            var montos = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Montos));
+
+            var data = [];
+            for (var i = 0; i < fechas.length; i++) {
+                data.push({ name: fechas[i], value: montos[i] });
+            }
+
+            var dom = document.getElementById("echartsPie");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                //title: { text: CHART_TITLE },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b} : {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: fechas
+                },
+                series: [
+                    {
+                        name: 'Ventas',
+                        type: 'pie',
+                        radius: '35%',
+                        center: ['50%', '50%'],
+                        data: data,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        </script>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
