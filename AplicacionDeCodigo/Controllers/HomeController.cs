@@ -207,5 +207,28 @@ namespace AplicacionDeCodigo.Controllers
 
             return View();
         }
+
+        public IActionResult RedireccionarAapexcharts()
+        {
+            return RedirectToAction("apexcharts");
+        }
+
+        public IActionResult apexcharts()
+        {
+            List<DateTime> fechas = new List<DateTime>();
+            List<decimal> montos = new List<decimal>();
+
+            List<Ventas> datosVentas = _graphicsContext.ventas.ToList();
+            foreach (var venta in datosVentas)
+            {
+                fechas.Add(venta.fecha);
+                montos.Add(venta.monto);
+            }
+
+            ViewBag.Fechas = fechas;
+            ViewBag.Montos = montos;
+
+            return View();
+        }
     }
 }
